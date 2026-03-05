@@ -1,0 +1,1111 @@
+{
+  "name": "Google Places Lead Scraper",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "cecd45d3-9b88-44d5-ad7d-2f8d824c6b15",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        25440,
+        3440
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "serpApiKey",
+              "value": "42562b53f33cb332a45554945763ea8ead2a9c94a88f04a3dd049991efdad0fd",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "serpApiEndpoint",
+              "value": "https://serpapi.com/search",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "rateLimitSeconds",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "id-4",
+              "name": "leadsSheetName",
+              "value": "Leads",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "queriesSheetName",
+              "value": "Lead Queries",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "googlePlacesApiKey",
+              "value": "AIzaSyCh6hWT5YuYkBxtsxYWcjm5QpaGjEQC-_o",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "5201b73d-06e7-4874-aac5-c514acdc3c6a",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        25664,
+        3440
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM",
+          "mode": "list",
+          "cachedResultName": "Lead Queries",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Workflow Configuration').first().json.queriesSheetName }}"
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "id": "776f67de-597f-417a-8712-347105d54d9d",
+      "name": "Read Lead Queries",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        25888,
+        3440
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9Ypd6seYFouKD7fC",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "leads",
+        "options": {}
+      },
+      "id": "33989d43-b336-4797-9a3e-83ab2c403313",
+      "name": "Split Listings",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        25888,
+        3712
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-4",
+              "name": "businessName",
+              "value": "={{ $('Is Valid Business Page').item.json.businessName }}",
+              "type": "string"
+            },
+            {
+              "id": "id-1",
+              "name": "createdAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "source",
+              "value": "={{ $('Split Listings').item.json.source || \"yellowpages\" }}",
+              "type": "string"
+            },
+            {
+              "id": "id-0",
+              "name": "query",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "phone",
+              "value": "={{ $('Is Valid Business Page').item.json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "email",
+              "value": "={{ $('Is Valid Business Page').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "website",
+              "value": "={{ $('Is Valid Business Page').item.json.website }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "address",
+              "value": "={{ $('Is Valid Business Page').item.json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "city",
+              "value": "={{ $('Is Valid Business Page').item.json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "id-10",
+              "name": "state",
+              "value": "={{ $('Is Valid Business Page').item.json.state }}",
+              "type": "string"
+            },
+            {
+              "id": "id-11",
+              "name": "zip",
+              "value": "={{ $('Is Valid Business Page').item.json.zip }}",
+              "type": "string"
+            },
+            {
+              "id": "id-12",
+              "name": "listingUrl",
+              "value": "={{ $('Is Valid Business Page').item.json.listingUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6ed44f39-d01e-418e-8747-4ffa3df84e4c",
+      "name": "Format Lead for Sheet",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        26720,
+        3968
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1774647331,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM/edit#gid=1774647331"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "businessName": "={{ $json.businessName }}",
+            "createdAt": "={{ $json.createdAt }}",
+            "source": "={{ $json.source }}",
+            "query": "={{ $json.query }}",
+            "phone": "={{ $json.phone }}",
+            "email": "={{ $json.email }}",
+            "website": "={{ $json.website }}",
+            "address": "={{ $json.address }}",
+            "city": "={{ $json.city }}",
+            "state": "={{ $json.state }}",
+            "zip": "={{ $json.zip }}",
+            "listingUrl": "={{ $json.listingUrl }}"
+          },
+          "matchingColumns": [
+            "businessName"
+          ],
+          "schema": [
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "createdAt",
+              "displayName": "createdAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zip",
+              "displayName": "zip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "listingUrl",
+              "displayName": "listingUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "10a2646f-4ede-478a-9a93-b2bd1e7f4d6a",
+      "name": "Append to Leads Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        26944,
+        3968
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9Ypd6seYFouKD7fC",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.businessName }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "id-2",
+              "leftValue": "={{ $json.phone }}",
+              "rightValue": "={{ $json.email }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "96d637f3-a14e-4f13-be25-0b0a14a430b4",
+      "name": "Is Valid Business Page",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        26496,
+        3984
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/place/textsearch/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $('Workflow Configuration').first().json.googlePlacesApiKey }}"
+            },
+            {
+              "name": "query",
+              "value": "={{ $json.query }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "ba70ab27-22da-4d7e-b303-493f4b0f840e",
+      "name": "Fetch Listings from Google Places",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        26112,
+        3440
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Workflow Configuration').first().json.rateLimitSeconds }}"
+      },
+      "id": "e27d0e33-b584-4a59-9871-1e1edfb203f7",
+      "name": "Rate Limit Wait Google Places",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        25440,
+        3712
+      ],
+      "webhookId": "eaa8dcd9-5860-4c25-9c05-4d5a4610a224"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Google Places API results and normalize data\nconst items = $input.all();\nconst normalizedListings = [];\n\n// Helper function to normalize phone numbers\nfunction normalizePhone(phone) {\n  if (!phone) return '';\n  // Remove all non-digit characters\n  const digits = phone.replace(/\\D/g, '');\n  // Format as (XXX) XXX-XXXX if 10 digits\n  if (digits.length === 10) {\n    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;\n  }\n  // Return original if not 10 digits\n  return phone;\n}\n\n// Helper function to extract email from text\nfunction extractEmail(text) {\n  if (!text) return '';\n  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/;\n  const match = text.match(emailRegex);\n  return match ? match[0] : '';\n}\n\n// Helper function to parse city, state, zip from plus_code compound_code\nfunction parseLocation(compoundCode, formattedAddress) {\n  let city = '';\n  let state = '';\n  let zip = '';\n  \n  if (compoundCode) {\n    // compound_code format: \"XXXX+XX City, State ZIP, Country\"\n    const parts = compoundCode.split(',');\n    if (parts.length >= 2) {\n      city = parts[0].replace(/^[A-Z0-9+]+\\s+/, '').trim();\n      const stateZip = parts[1].trim();\n      const stateZipMatch = stateZip.match(/^([A-Z]{2})\\s+(\\d{5})/);\n      if (stateZipMatch) {\n        state = stateZipMatch[1];\n        zip = stateZipMatch[2];\n      }\n    }\n  }\n  \n  // Fallback to parsing formatted_address if compound_code parsing failed\n  if (!city && formattedAddress) {\n    const addressParts = formattedAddress.split(',');\n    if (addressParts.length >= 3) {\n      city = addressParts[addressParts.length - 3].trim();\n      const stateZip = addressParts[addressParts.length - 2].trim();\n      const stateZipMatch = stateZip.match(/^([A-Z]{2})\\s+(\\d{5})/);\n      if (stateZipMatch) {\n        state = stateZipMatch[1];\n        zip = stateZipMatch[2];\n      }\n    }\n  }\n  \n  return { city, state, zip };\n}\n\nfor (const item of items) {\n  const data = item.json;\n  \n  // Check if results exists\n  if (data.results && Array.isArray(data.results)) {\n    for (const result of data.results) {\n      const location = parseLocation(\n        result.plus_code?.compound_code,\n        result.formatted_address\n      );\n      \n      const listing = {\n        businessName: result.name || '',\n        phone: normalizePhone(result.formatted_phone_number || ''),\n        email: extractEmail(result.editorial_summary?.overview || ''),\n        website: result.website || '',\n        address: result.formatted_address || '',\n        city: location.city,\n        state: location.state,\n        zip: location.zip,\n        listingUrl: result.url || '',\n        snippet: result.editorial_summary?.overview || result.types?.join(', ') || '',\n        position: 0,\n        source: 'Google Places',\n        placeId: result.place_id || ''\n      };\n      \n      normalizedListings.push(listing);\n    }\n  }\n}\n\nreturn [{ json: { leads: normalizedListings } }];"
+      },
+      "id": "8c00e6d6-0bee-44cb-8a43-65095f3a0690",
+      "name": "Parse Google Places Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        25664,
+        3712
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.placeId }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a6d3db2b-ef33-4908-8d30-da11a2caf365",
+      "name": "Check If Has Place ID",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        26112,
+        3712
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/place/details/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $('Workflow Configuration').first().json.googlePlacesApiKey }}"
+            },
+            {
+              "name": "place_id",
+              "value": "={{ $json.placeId }}"
+            },
+            {
+              "name": "fields",
+              "value": "website,formatted_phone_number"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "0c3f9975-3fc4-4980-82ff-3296daa1cb88",
+      "name": "Fetch Place Details",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        25424,
+        4048
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "f1827126-ce08-4c93-b240-65876f77d55b",
+      "name": "Rate Limit Wait Details",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        25648,
+        4048
+      ],
+      "webhookId": "eade5639-a1cc-4e6f-8b4e-d8b7684c41a2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "website",
+              "value": "={{ $json.result?.website || $json.website }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "phone",
+              "value": "={{ $json.result?.formatted_phone_number || $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "businessName",
+              "value": "={{ $('Check If Has Place ID').item.json.businessName }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "email",
+              "value": "={{ $('Check If Has Place ID').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "address",
+              "value": "={{ $('Check If Has Place ID').item.json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "city",
+              "value": "={{ $('Check If Has Place ID').item.json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "state",
+              "value": "={{ $('Check If Has Place ID').item.json.state }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "zip",
+              "value": "={{ $('Check If Has Place ID').item.json.zip }}",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "listingUrl",
+              "value": "={{ $('Check If Has Place ID').item.json.listingUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "id-10",
+              "name": "snippet",
+              "value": "={{ $('Check If Has Place ID').item.json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "id-11",
+              "name": "source",
+              "value": "={{ $('Check If Has Place ID').item.json.source }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "52b87c8a-7f5e-40bd-8886-a052986712d3",
+      "name": "Update Website from Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        25872,
+        4048
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.website }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "id-2",
+              "leftValue": "={{ $json.email }}",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "39128d4b-93b4-4016-9887-4eeb99db25d8",
+      "name": "Check If Has Website",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        26144,
+        4048
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "businessName",
+              "value": "={{ $json.businessName }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "createdAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "address",
+              "value": "={{ $json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "city",
+              "value": "={{ $json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "state",
+              "value": "={{ $json.state }}",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "zip",
+              "value": "={{ $json.zip }}",
+              "type": "string"
+            },
+            {
+              "id": "id-10",
+              "name": "listingUrl",
+              "value": "={{ $json.listingUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2e563cdf-81f1-4f4f-9469-a7de9091d3eb",
+      "name": "Format Lead for No Website Sheet",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        26480,
+        4192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1017414638,
+          "mode": "list",
+          "cachedResultName": "Leads (No Website)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qlel_ChzZ_IuiXSzCodOU3wgMUjf99Qw3C-iDFOyQbM/edit#gid=1017414638"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "businessName": "={{ $json.businessName }}",
+            "createdAt": "={{ $json.createdAt }}",
+            "source": "={{ $json.source }}",
+            "email": "={{ $json.email }}",
+            "city": "={{ $json.city }}",
+            "state": "={{ $json.state }}",
+            "zip": "={{ $json.zip }}",
+            "listingUrl": "={{ $json.listingUrl }}",
+            "address": "={{ $json.address }}",
+            "phone": "={{ $json.phone }}",
+            "query": "={{ $json.source }}"
+          },
+          "matchingColumns": [
+            "businessName"
+          ],
+          "schema": [
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "createdAt",
+              "displayName": "createdAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zip",
+              "displayName": "zip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "listingUrl",
+              "displayName": "listingUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "d5f95f37-019f-4de2-819e-b2f2eb5757f8",
+      "name": "Append to No Website Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        26720,
+        4192
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9Ypd6seYFouKD7fC",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Read Lead Queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Lead for Sheet": {
+      "main": [
+        [
+          {
+            "node": "Append to Leads Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Lead Queries": {
+      "main": [
+        [
+          {
+            "node": "Fetch Listings from Google Places",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Listings from Google Places": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Wait Google Places",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Wait Google Places": {
+      "main": [
+        [
+          {
+            "node": "Parse Google Places Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Google Places Results": {
+      "main": [
+        [
+          {
+            "node": "Split Listings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Valid Business Page": {
+      "main": [
+        [
+          {
+            "node": "Format Lead for Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Has Place ID": {
+      "main": [
+        [
+          {
+            "node": "Fetch Place Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Place Details": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Wait Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Wait Details": {
+      "main": [
+        [
+          {
+            "node": "Update Website from Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Website from Details": {
+      "main": [
+        [
+          {
+            "node": "Check If Has Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Listings": {
+      "main": [
+        [
+          {
+            "node": "Check If Has Place ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Has Website": {
+      "main": [
+        [
+          {
+            "node": "Is Valid Business Page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Lead for No Website Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Lead for No Website Sheet": {
+      "main": [
+        [
+          {
+            "node": "Append to No Website Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6afd753a-7732-47b7-8407-762cd1115646",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6afbb69a4501acfd7c990e14eb9be170e4463ac90ef09814cf0459fab886ea6b"
+  },
+  "id": "AGAR1mN4EExeocRb",
+  "tags": []
+}
